@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Unit 4 英語互動站 - Anny老師</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        :root {
+            --primary: #4A90E2; --secondary: #F5A623; --success: #7ED321; --danger: #FF5E5E; --bg: #F0F4F8; --quiz-purple: #6C63FF; --dark: #333;
+        }
+        * { touch-action: manipulation; box-sizing: border-box; }
+        body { font-family: -apple-system, sans-serif; background-color: var(--bg); margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
+        nav { width: 100%; background: white; box-shadow: 0 2px 8px rgba(0,0,0,0.1); display: flex; justify-content: center; gap: 8px; padding: 12px 5px; position: sticky; top: 0; z-index: 100; }
+        .nav-btn { flex: 1; max-width: 100px; padding: 10px 0; border-radius: 12px; border: 2px solid var(--primary); background: transparent; color: var(--primary); font-weight: bold; font-size: 0.85rem; cursor: pointer; text-align: center; }
+        .nav-btn.active { background: var(--primary); color: white; }
+        .container { width: 95%; max-width: 650px; margin-top: 20px; display: none; flex-direction: column; align-items: center; padding-bottom: 50px; }
+        .container.active { display: flex; }
+        
+        .card { background: white; width: 100%; border-radius: 20px; padding: 25px 20px; box-shadow: 0 8px 15px rgba(0,0,0,0.05); text-align: center; margin-bottom: 20px; }
+        .word { font-size: 2.8rem; color: var(--primary); font-weight: bold; margin-bottom: 5px; }
+        .pos { color: #888; font-style: italic; margin-bottom: 10px; font-size: 0.9rem; }
+        .def-en { font-size: 1rem; color: #555; margin-bottom: 15px; line-height: 1.4; padding: 0 10px; font-style: italic; }
+        .def-ch { font-size: 1.25rem; color: #222; font-weight: 500; border-top: 1px solid #eee; padding-top: 15px; line-height: 1.6; }
+        
+        .btn-main { width: 100%; min-height: 55px; border-radius: 15px; font-size: 1.1rem; font-weight: bold; margin-bottom: 10px; cursor: pointer; border: none; }
+        .feedback { min-height: 50px; margin-top: 15px; font-weight: bold; font-size: 1.2rem; text-align: center; }
+        .error-letter { color: var(--danger); text-decoration: underline; font-weight: 900; }
+
+        .quiz-audio-btn { width: 85px; height: 85px; background: var(--quiz-purple); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; margin: 10px auto 25px; border: none; cursor: pointer; box-shadow: 0 4px 15px rgba(108, 99, 255, 0.4); }
+        .quiz-options { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; width: 100%; }
+        .option-btn { background: #F9FAFB; border: 1px solid #E5E7EB; border-radius: 12px; padding: 18px 8px; font-size: 0.95rem; cursor: pointer; min-height: 75px; color: #333; }
+        .option-btn.wrong { background: #FFEBEE !important; border-color: var(--danger) !important; color: var(--danger) !important; }
+
+        .report-item { width: 100%; display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid #EEE; }
+        .report-label { font-weight: bold; color: #555; }
+        .report-val { color: var(--primary); font-weight: 800; }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <button class="nav-btn active" onclick="showPage('learn')">Learn</button>
+        <button class="nav-btn" onclick="showPage('game')">Game</button>
+        <button class="nav-btn" onclick="showPage('quiz')">Quiz</button>
+        <button class="nav-btn" onclick="showPage('report')">Report</button>
+    </nav>
+
+    <div id="learn" class="container active">
+        <div class="card"><div id="learn-card"></div></div>
+        <button class="btn-main" style="background:var(--secondary); color:white;" onclick="handleSpeak()">🔊 Listen (聽音)</button>
+        <button class="btn-main" style="background:var(--primary); color:white;" onclick="handlePractice()">🎤 Practice (開口練)</button>
+        <div id="learn-feedback" class="feedback"></div>
+        <button class="btn-main" style="background:var(--dark); color:white;" onclick="nextLearnWord()">Next 單字 →</button>
+    </div>
+
+    <div id="game" class="container">
+        <div class="card">
+            <div style="display:flex; justify-content:space-between; font-weight:bold; margin-bottom:15px;">
+                <span>Score: <span id="game-score-display">0</span></span>
+                <span style="color:var(--danger);">Time: <span id="game-time-display">60</span>s</span>
+            </div>
+            <div id="game-word-display" class="word" style="margin: 30px 0;">READY?</div>
+            <div id="game-feedback" class="feedback"></div>
+        </div>
+        <button id="game-start-btn" class="btn-main" style="background:var(--success); color:white;" onclick="startGame()">START CHALLENGE</button>
+    </div>
+
+    <div id="quiz" class="container">
+        <div class="card">
+            <div style="display:flex; justify-content:space-between; margin-bottom:10px; font-weight:bold; color:#666;">
+                <span>題目: <span id="quiz-num">1</span> / 10</span>
+                <span>得分: <span id="quiz-score-display">0</span></span>
+            </div>
+            <button class="quiz-audio-btn" onclick="playQuizAudio()">🔊</button>
+            <div id="quiz-options" class="quiz-options"></div>
+        </div>
+        <div id="quiz-feedback" class="feedback"></div>
+        <button id="quiz-retry-btn" class="btn-main" style="background:var(--primary); color:white; display:none;" onclick="startQuizSession()">Restart Quiz</button>
+    </div>
+
+    <div id="report" class="container">
+        <div class="card">
+            <h2>Progress Report</h2>
+            <div class="report-item"><span class="report-label">Game 最高分</span><span class="report-val"><span id="best-game">0</span> 分</span></div>
+            <div class="report-item"><span class="report-label">Quiz 最高得分</span><span class="report-val"><span id="best-quiz">0</span> / 100</span></div>
+        </div>
+    </div>
+
+    <script>
+        const vocabulary = [
+            { word: "stressful", pos: "adj.", def_en: "making someone feel worried and nervous", def_ch: "緊張的，壓力重的", root: "stress" },
+            { word: "stress", pos: "n. [U]", def_en: "a feeling of being worried and nervous caused by a difficult situation", def_ch: "壓力", root: "stress" },
+            { word: "daily", pos: "adj.", def_en: "taking place every day", def_ch: "每天的，日常的", root: "day" },
+            { word: "maintain", pos: "vt.", def_en: "to make something stay at the same standard or level", def_ch: "保持，維持", root: "maintain" },
+            { word: "state", pos: "n. [C]", def_en: "a condition that someone or something is in", def_ch: "狀況，狀態", root: "state" },
+            { word: "state", pos: "vt.", def_en: "to formally say or write something", def_ch: "陳述，聲明", root: "state" },
+            { word: "statement", pos: "n. [C]", def_en: "something that you say or write that gives information or an opinion", def_ch: "陳述，聲明", root: "state" },
+            { word: "psychological", pos: "adj.", def_en: "connected with the way the mind works", def_ch: "心理的", root: "psycho" },
+            { word: "factor", pos: "n. [C]", def_en: "something that causes a situation", def_ch: "要素，因素", root: "factor" },
+            { word: "northern", pos: "adj.", def_en: "located or related to the north of a region", def_ch: "北部的，在北方的", root: "north" },
+            { word: "bathe", pos: "vt.", def_en: "to cover something in an enjoyable feeling (e.g. light)", def_ch: "沉浸於", root: "bathe" },
+            { word: "bathe", pos: "vi.", def_en: "to take a bath", def_ch: "洗澡", root: "bathe" },
+            { word: "cope", pos: "vi.", def_en: "to deal with a difficult situation successfully", def_ch: "應付，處理", root: "cope" },
+            { word: "ski", pos: "vi.", def_en: "to move over snow on a pair of long flat plastic/wood pieces", def_ch: "滑雪", root: "ski" },
+            { word: "seek", pos: "vt.", def_en: "to try to find something (e.g. advice or help)", def_ch: "尋求，尋找", root: "seek" },
+            { word: "native", pos: "n. [C]", def_en: "someone who was born in a particular country or place", def_ch: "本國人，本地人", root: "native" },
+            { word: "native", pos: "adj.", def_en: "relating to the place where you were born", def_ch: "出生地的，家鄉的", root: "native" },
+            { word: "stuck", pos: "adj.", def_en: "unable to escape from an unpleasant situation or to move", def_ch: "無法擺脫的，卡住的", root: "stick" },
+            { word: "conduct", pos: "vt.", def_en: "to do a particular activity in an organized way", def_ch: "執行，實施", root: "conduct" },
+            { word: "inner", pos: "adj.", def_en: "private/inside; not showing to other people", def_ch: "內心的，內在的", root: "inner" },
+            { word: "additional", pos: "adj.", def_en: "extra or more than what has been mentioned", def_ch: "另外的，額外的", root: "add" },
+            { word: "additionally", pos: "adv.", def_en: "in addition to what was just mentioned", def_ch: "此外，另外", root: "add" },
+            { word: "expand", pos: "vt.", def_en: "to make something larger in size or greater in number", def_ch: "擴充，擴展", root: "expand" },
+            { word: "enable", pos: "vt.", def_en: "having a way to make something happen or change", def_ch: "使能夠", root: "enable" },
+            { word: "continue", pos: "vi.", def_en: "to keep existing, happening, or doing something", def_ch: "繼續", root: "continue" }
+        ];
+
+        let bestScores = { game: 0, quiz: 0 };
+        const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+        let mainRec = new SpeechRec(); mainRec.lang = 'en-US'; mainRec.interimResults = false;
+
+        function showPage(id) {
+            document.querySelectorAll('.container').forEach(c => c.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            const btns = document.querySelectorAll('.nav-btn');
+            btns.forEach(b => { if(b.innerText.toLowerCase() === id) b.classList.add('active'); });
+            window.speechSynthesis.cancel(); gameActive = false;
+            try { mainRec.stop(); } catch(e) {}
+            if(id === 'report') updateReport();
+            if(id === 'learn') updateLearn();
+            if(id === 'quiz') startQuizSession();
+        }
+
+        function globalSpeak(text) { window.speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(text); u.lang = 'en-US'; u.rate = 0.9; window.speechSynthesis.speak(u); }
+
+        function getDiffHtml(target, input) {
+            let html = ""; let t = target.toLowerCase(); let i = input.toLowerCase();
+            for (let idx = 0; idx < t.length; idx++) {
+                if (t[idx] === i[idx]) html += t[idx];
+                else html += `<span class="error-letter">${t[idx]}</span>`;
+            }
+            return html;
+        }
+
+        // --- Learn ---
+        let learnIdx = 0;
+        function updateLearn() {
+            const d = vocabulary[learnIdx];
+            document.getElementById('learn-card').innerHTML = `
+                <div class="word">${d.word}</div>
+                <div class="pos">${d.pos}</div>
+                <div class="def-en">${d.def_en}</div>
+                <div class="def-ch">${d.def_ch}</div>
+            `;
+            document.getElementById('learn-feedback').innerText = "";
+        }
+        function nextLearnWord() { learnIdx = (learnIdx + 1) % vocabulary.length; updateLearn(); }
+        function handleSpeak() { globalSpeak(vocabulary[learnIdx].word); }
+        function handlePractice() {
+            const fb = document.getElementById('learn-feedback'); fb.innerText = "Listening... 🎤";
+            mainRec.onresult = (e) => {
+                const text = e.results[0][0].transcript.toLowerCase();
+                const target = vocabulary[learnIdx].word.toLowerCase();
+                if(text.includes(target)) { fb.innerText = "Correct! ✨"; fb.style.color = "var(--success)"; }
+                else { fb.innerHTML = `Try again! ❌<br><small style="color:#666">拼寫參考: ${getDiffHtml(target, text)}</small>`; fb.style.color = "var(--danger)"; }
+            };
+            try { mainRec.start(); } catch(e) {}
+        }
+
+        // --- Game ---
+        let gameActive = false, gameScore = 0, currentGWord = "";
+        function startGame() {
+            gameActive = true; gameScore = 0; let time = 60;
+            document.getElementById('game-score-display').innerText = "0";
+            document.getElementById('game-start-btn').style.display = 'none';
+            const timer = setInterval(() => {
+                time--; document.getElementById('game-time-display').innerText = time;
+                if(time <= 0 || !gameActive) { 
+                    clearInterval(timer); gameActive = false; try { mainRec.stop(); } catch(e) {}
+                    if(gameScore > bestScores.game) bestScores.game = gameScore;
+                    document.getElementById('game-start-btn').style.display = 'block';
+                    document.getElementById('game-word-display').innerText = "TIME UP!";
+                }
+            }, 1000);
+            loadNextGameWord();
+        }
+        function loadNextGameWord() {
+            if(!gameActive) return;
+            currentGWord = vocabulary[Math.floor(Math.random()*vocabulary.length)].word;
+            document.getElementById('game-word-display').innerText = currentGWord;
+            mainRec.onresult = (e) => {
+                const text = e.results[0][0].transcript.toLowerCase();
+                if(text.includes(currentGWord.toLowerCase())) {
+                    gameScore += 10; document.getElementById('game-score-display').innerText = gameScore;
+                    setTimeout(loadNextGameWord, 300);
+                }
+            };
+            mainRec.onend = () => { if(gameActive) try { mainRec.start(); } catch(e) {} };
+            try { mainRec.start(); } catch(e) {}
+        }
+
+        // --- Quiz ---
+        let quizSession = { num: 1, score: 0, used: [], curTarget: null, firstTry: true };
+        function startQuizSession() { quizSession = { num: 1, score: 0, used: [] }; loadQuiz(); }
+        function loadQuiz() {
+            const container = document.getElementById('quiz-options'); const fb = document.getElementById('quiz-feedback');
+            if (quizSession.num > 10) {
+                document.getElementById('quiz-score-display').innerText = quizSession.score;
+                if(quizSession.score > bestScores.quiz) bestScores.quiz = quizSession.score;
+                fb.innerText = "測驗完成！分數已紀錄。"; container.innerHTML = ""; document.getElementById('quiz-retry-btn').style.display='block'; return;
+            }
+            document.getElementById('quiz-num').innerText = quizSession.num; document.getElementById('quiz-score-display').innerText = quizSession.score; fb.innerText = "";
+            let pool = vocabulary.filter(v => !quizSession.used.includes(v.word));
+            let target = pool[Math.floor(Math.random()*pool.length)];
+            quizSession.curTarget = target; quizSession.used.push(target.word); quizSession.firstTry = true;
+            let opts = [target.def_ch];
+            while(opts.length < 4) {
+                let r = vocabulary[Math.floor(Math.random()*vocabulary.length)];
+                if(!opts.includes(r.def_ch) && r.root !== target.root) opts.push(r.def_ch);
+            }
+            opts.sort(()=>0.5-Math.random()); container.innerHTML = '';
+            opts.forEach(opt => {
+                const b = document.createElement('button'); b.className = 'option-btn'; b.innerText = opt;
+                b.onclick = () => {
+                    if(opt === target.def_ch) {
+                        fb.innerText = "Correct! ✨"; fb.style.color="var(--success)";
+                        if(quizSession.firstTry) quizSession.score += 10; document.getElementById('quiz-score-display').innerText = quizSession.score;
+                        quizSession.num++; setTimeout(loadQuiz, 1000);
+                    } else {
+                        quizSession.firstTry = false; b.classList.add('wrong'); fb.innerText = "Try again! ❌"; fb.style.color="var(--danger)";
+                    }
+                };
+                container.appendChild(b);
+            });
+            globalSpeak(target.word);
+        }
+        function playQuizAudio() { if(quizSession.curTarget) globalSpeak(quizSession.curTarget.word); }
+
+        function updateReport() {
+            document.getElementById('best-game').innerText = bestScores.game;
+            document.getElementById('best-quiz').innerText = bestScores.quiz;
+        }
+        updateLearn();
+    </script>
+</body>
+</html>
