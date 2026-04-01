@@ -17,7 +17,6 @@
         .container { width: 95%; max-width: 650px; margin-top: 20px; display: none; flex-direction: column; align-items: center; padding-bottom: 50px; }
         .container.active { display: flex; }
         
-        /* 翻卡樣式 */
         .flip-card { background-color: transparent; width: 100%; height: 320px; perspective: 1000px; margin-bottom: 20px; cursor: pointer; }
         .flip-card-inner { position: relative; width: 100%; height: 100%; text-align: center; transition: transform 0.6s; transform-style: preserve-3d; }
         .flip-card.flipped .flip-card-inner { transform: rotateY(180deg); }
@@ -55,8 +54,7 @@
 
     <div id="learn" class="container active">
         <div class="flip-card" onclick="this.classList.toggle('flipped')">
-            <div class="flip-card-inner" id="learn-card-inner">
-                </div>
+            <div class="flip-card-inner" id="learn-card-inner"></div>
         </div>
         <button class="btn-main" style="background:var(--secondary); color:white;" onclick="handleSpeak(); event.stopPropagation();">🔊 Listen (聽音)</button>
         <button class="btn-main" style="background:var(--primary); color:white;" onclick="handlePractice(); event.stopPropagation();">🎤 Practice (開口練)</button>
@@ -154,7 +152,6 @@
             return html;
         }
 
-        // --- Learn Section ---
         let learnIdx = 0;
         function updateLearn() {
             const d = vocabulary[learnIdx];
@@ -165,7 +162,7 @@
                     <div class="word">${d.word}</div>
                     <div class="pos">${d.pos}</div>
                     <div class="def-en">${d.def_en}</div>
-                    <p style="color:#999; font-size:0.8rem; margin-top:20px;">(Click to Flip / 點擊翻轉)</p>
+                    <p style="color:var(--primary); font-size:0.9rem; margin-top:20px; font-weight:bold;">(Click to See Chinese / 點擊看中文)</p>
                 </div>
                 <div class="flip-card-back">
                     <div class="word">${d.word}</div>
@@ -187,7 +184,6 @@
             try { mainRec.start(); } catch(e) {}
         }
 
-        // --- Game Section ---
         let gameActive = false, gameScore = 0, currentGWord = "";
         function startGame() {
             gameActive = true; gameScore = 0; let time = 60;
@@ -219,7 +215,6 @@
             try { mainRec.start(); } catch(e) {}
         }
 
-        // --- Quiz Section ---
         let quizSession = { num: 1, score: 0, used: [], curTarget: null, firstTry: true };
         function startQuizSession() { quizSession = { num: 1, score: 0, used: [] }; loadQuiz(); }
         function loadQuiz() {
