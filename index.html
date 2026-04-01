@@ -11,31 +11,34 @@
         }
         * { touch-action: manipulation; box-sizing: border-box; }
         body { font-family: -apple-system, sans-serif; background-color: var(--bg); margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; overflow-x: hidden; }
-        nav { width: 100%; background: white; box-shadow: 0 2px 8px rgba(0,0,0,0.1); display: flex; justify-content: center; gap: 8px; padding: 12px 5px; position: sticky; top: 0; z-index: 100; }
-        .nav-btn { flex: 1; max-width: 100px; padding: 10px 0; border-radius: 12px; border: 2px solid var(--primary); background: transparent; color: var(--primary); font-weight: bold; font-size: 0.85rem; cursor: pointer; text-align: center; }
+        nav { width: 100%; background: white; box-shadow: 0 2px 8px rgba(0,0,0,0.1); display: flex; justify-content: center; gap: 5px; padding: 12px 5px; position: sticky; top: 0; z-index: 100; }
+        .nav-btn { flex: 1; max-width: 90px; padding: 10px 0; border-radius: 12px; border: 2px solid var(--primary); background: transparent; color: var(--primary); font-weight: bold; font-size: 0.8rem; cursor: pointer; text-align: center; }
         .nav-btn.active { background: var(--primary); color: white; }
-        .container { width: 95%; max-width: 650px; margin-top: 20px; display: none; flex-direction: column; align-items: center; padding-bottom: 50px; }
+        .container { width: 95%; max-width: 650px; margin-top: 15px; display: none; flex-direction: column; align-items: center; padding-bottom: 50px; }
         .container.active { display: flex; }
         
-        .flip-card { background-color: transparent; width: 100%; height: 320px; perspective: 1000px; margin-bottom: 20px; cursor: pointer; }
+        /* 翻卡樣式 */
+        .flip-card { background-color: transparent; width: 100%; height: 350px; perspective: 1000px; margin-bottom: 15px; cursor: pointer; }
         .flip-card-inner { position: relative; width: 100%; height: 100%; text-align: center; transition: transform 0.6s; transform-style: preserve-3d; }
         .flip-card.flipped .flip-card-inner { transform: rotateY(180deg); }
-        .flip-card-front, .flip-card-back { position: absolute; width: 100%; height: 100%; -webkit-backface-visibility: hidden; backface-visibility: hidden; border-radius: 20px; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 25px; box-shadow: 0 8px 15px rgba(0,0,0,0.05); }
+        .flip-card-front, .flip-card-back { position: absolute; width: 100%; height: 100%; -webkit-backface-visibility: hidden; backface-visibility: hidden; border-radius: 20px; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; box-shadow: 0 8px 15px rgba(0,0,0,0.05); border: 1px solid #eee; }
         .flip-card-front { background-color: white; }
         .flip-card-back { background-color: white; transform: rotateY(180deg); }
 
-        .word { font-size: 2.8rem; color: var(--primary); font-weight: bold; margin-bottom: 5px; }
+        .word { font-size: 2.6rem; color: var(--primary); font-weight: bold; margin-bottom: 5px; }
         .pos { color: #888; font-style: italic; margin-bottom: 10px; font-size: 0.9rem; }
-        .def-en { font-size: 1.1rem; color: #555; line-height: 1.5; font-style: italic; }
+        .def-en { font-size: 1rem; color: #555; line-height: 1.4; font-style: italic; }
         .def-ch { font-size: 1.5rem; color: #222; font-weight: bold; border-top: 2px solid var(--primary); padding-top: 15px; margin-top: 10px; }
         
         .btn-main { width: 100%; min-height: 55px; border-radius: 15px; font-size: 1.1rem; font-weight: bold; margin-bottom: 10px; cursor: pointer; border: none; }
-        .feedback { min-height: 50px; margin-top: 15px; font-weight: bold; font-size: 1.2rem; text-align: center; }
+        .feedback { min-height: 45px; margin-top: 10px; font-weight: bold; font-size: 1.2rem; text-align: center; }
         .error-letter { color: var(--danger); text-decoration: underline; font-weight: 900; }
 
-        .quiz-audio-btn { width: 85px; height: 85px; background: var(--quiz-purple); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; margin: 10px auto 25px; border: none; cursor: pointer; }
-        .quiz-options { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; width: 100%; }
-        .option-btn { background: #F9FAFB; border: 1px solid #E5E7EB; border-radius: 12px; padding: 18px 8px; font-size: 0.95rem; cursor: pointer; min-height: 75px; color: #333; }
+        /* Quiz 手機優化 */
+        .quiz-card { background: white; width: 100%; border-radius: 20px; padding: 20px; box-shadow: 0 8px 15px rgba(0,0,0,0.05); text-align: center; margin-bottom: 15px; min-height: 400px; display: flex; flex-direction: column; justify-content: space-between; }
+        .quiz-audio-btn { width: 90px; height: 90px; background: var(--quiz-purple); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2.8rem; margin: 10px auto 20px; border: none; cursor: pointer; box-shadow: 0 4px 15px rgba(108, 99, 255, 0.4); flex-shrink: 0; }
+        .quiz-options { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%; margin-top: 10px; }
+        .option-btn { background: #F9FAFB; border: 1px solid #E5E7EB; border-radius: 12px; padding: 15px 5px; font-size: 0.9rem; cursor: pointer; min-height: 65px; color: #333; line-height: 1.3; }
         .option-btn.wrong { background: #FFEBEE !important; border-color: var(--danger) !important; color: var(--danger) !important; }
 
         .report-item { width: 100%; display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid #EEE; }
@@ -63,33 +66,33 @@
     </div>
 
     <div id="game" class="container">
-        <div class="card">
-            <div style="display:flex; justify-content:space-between; font-weight:bold; margin-bottom:15px;">
+        <div class="quiz-card" style="min-height: 250px; justify-content: center;">
+            <div style="display:flex; justify-content:space-between; font-weight:bold; margin-bottom:15px; width: 100%;">
                 <span>Score: <span id="game-score-display">0</span></span>
                 <span style="color:var(--danger);">Time: <span id="game-time-display">60</span>s</span>
             </div>
-            <div id="game-word-display" class="word" style="margin: 30px 0;">READY?</div>
+            <div id="game-word-display" class="word" style="margin: 20px 0;">READY?</div>
             <div id="game-feedback" class="feedback"></div>
         </div>
         <button id="game-start-btn" class="btn-main" style="background:var(--success); color:white;" onclick="startGame()">START CHALLENGE</button>
     </div>
 
     <div id="quiz" class="container">
-        <div class="card">
-            <div style="display:flex; justify-content:space-between; margin-bottom:10px; font-weight:bold; color:#666;">
-                <span>題目: <span id="quiz-num">1</span> / 10</span>
+        <div class="quiz-card" id="quiz-main-card">
+            <div style="display:flex; justify-content:space-between; margin-bottom:10px; font-weight:bold; color:#666; width: 100%;">
+                <span>題號: <span id="quiz-num">1</span> / 10</span>
                 <span>得分: <span id="quiz-score-display">0</span></span>
             </div>
             <button class="quiz-audio-btn" onclick="playQuizAudio()">🔊</button>
             <div id="quiz-options" class="quiz-options"></div>
         </div>
         <div id="quiz-feedback" class="feedback"></div>
-        <button id="quiz-retry-btn" class="btn-main" style="background:var(--primary); color:white; display:none;" onclick="startQuizSession()">Restart Quiz</button>
+        <button id="quiz-retry-btn" class="btn-main" style="background:var(--primary); color:white; display:none;" onclick="startQuizSession()">Restart Quiz (重新測驗)</button>
     </div>
 
     <div id="report" class="container">
-        <div class="card">
-            <h2>Progress Report</h2>
+        <div class="quiz-card" style="min-height: auto;">
+            <h2 style="margin-top:0">Progress Report</h2>
             <div class="report-item"><span class="report-label">Game 最高分</span><span class="report-val"><span id="best-game">0</span> 分</span></div>
             <div class="report-item"><span class="report-label">Quiz 最高得分</span><span class="report-val"><span id="best-quiz">0</span> / 100</span></div>
         </div>
@@ -152,6 +155,7 @@
             return html;
         }
 
+        // --- Learn ---
         let learnIdx = 0;
         function updateLearn() {
             const d = vocabulary[learnIdx];
@@ -184,6 +188,7 @@
             try { mainRec.start(); } catch(e) {}
         }
 
+        // --- Game ---
         let gameActive = false, gameScore = 0, currentGWord = "";
         function startGame() {
             gameActive = true; gameScore = 0; let time = 60;
@@ -215,16 +220,27 @@
             try { mainRec.start(); } catch(e) {}
         }
 
+        // --- Quiz ---
         let quizSession = { num: 1, score: 0, used: [], curTarget: null, firstTry: true };
-        function startQuizSession() { quizSession = { num: 1, score: 0, used: [] }; loadQuiz(); }
+        function startQuizSession() { 
+            quizSession = { num: 1, score: 0, used: [] }; 
+            document.getElementById('quiz-retry-btn').style.display='none'; // 重啟時隱藏按鈕 
+            document.getElementById('quiz-main-card').style.display='flex';
+            loadQuiz(); 
+        }
         function loadQuiz() {
             const container = document.getElementById('quiz-options'); const fb = document.getElementById('quiz-feedback');
             if (quizSession.num > 10) {
                 document.getElementById('quiz-score-display').innerText = quizSession.score;
                 if(quizSession.score > bestScores.quiz) bestScores.quiz = quizSession.score;
-                fb.innerText = "測驗完成！分數已紀錄。"; container.innerHTML = ""; document.getElementById('quiz-retry-btn').style.display='block'; return;
+                fb.innerText = "測驗完成！分數已紀錄。"; 
+                document.getElementById('quiz-main-card').style.display='none';
+                document.getElementById('quiz-retry-btn').style.display='block'; 
+                return;
             }
-            document.getElementById('quiz-num').innerText = quizSession.num; document.getElementById('quiz-score-display').innerText = quizSession.score; fb.innerText = "";
+            document.getElementById('quiz-num').innerText = quizSession.num; 
+            document.getElementById('quiz-score-display').innerText = quizSession.score; 
+            fb.innerText = "";
             let pool = vocabulary.filter(v => !quizSession.used.includes(v.word));
             let target = pool[Math.floor(Math.random()*pool.length)];
             quizSession.curTarget = target; quizSession.used.push(target.word); quizSession.firstTry = true;
@@ -239,7 +255,8 @@
                 b.onclick = () => {
                     if(opt === target.def_ch) {
                         fb.innerText = "Correct! ✨"; fb.style.color="var(--success)";
-                        if(quizSession.firstTry) quizSession.score += 10; document.getElementById('quiz-score-display').innerText = quizSession.score;
+                        if(quizSession.firstTry) quizSession.score += 10; 
+                        document.getElementById('quiz-score-display').innerText = quizSession.score; // 即時更新分數 
                         quizSession.num++; setTimeout(loadQuiz, 1000);
                     } else {
                         quizSession.firstTry = false; b.classList.add('wrong'); fb.innerText = "Try again! ❌"; fb.style.color="var(--danger)";
